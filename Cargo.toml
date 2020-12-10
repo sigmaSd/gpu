@@ -1,0 +1,13 @@
+[package]
+name = "gpu"
+version = "0.1.0"
+authors = ["Nbiba Bedis <bedisnbiba@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bytemuck = "1.4.1"
+futures = "0.3.8"
+shaderc = "0.6.0"
+wgpu = "0.6.2"

@@ -24,8 +24,11 @@ The user must ensure that the spirv and the vector have the same number of buffe
 ***calc***
 
 Macro to compile spirv from an equation
+
 All buffers need to have the name b with a digit like b1
+
 b0 is the output buffer
+
 Examples:
 ```rust
   calc!(b0 = 4)

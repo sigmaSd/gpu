@@ -1,5 +1,5 @@
 # gpu
-Rust library to apply oprations on a buffer using the gpu
+Rust library to apply operations on a buffer using the gpu
 ```rust
 use gpu::{calc, execute_gpu};
 

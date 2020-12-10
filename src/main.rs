@@ -1,21 +1,5 @@
-use std::{convert::TryInto, str::FromStr};
+use std::convert::TryInto;
 use wgpu::util::DeviceExt;
-
-async fn run(spirv: &[u32]) {
-    let numbers = if std::env::args().len() <= 1 {
-        let default = vec![1, 2, 3, 4];
-        println!("No numbers were provided, defaulting to {:?}", default);
-        default
-    } else {
-        std::env::args()
-            .skip(1)
-            .map(|s| u32::from_str(&s).expect("You must pass a list of positive integers!"))
-            .collect()
-    };
-
-    let times = execute_gpu(numbers, spirv).await;
-    println!("Times: {:?}", times);
-}
 
 async fn execute_gpu(numbers: Vec<u32>, spirv: &[u32]) -> Vec<u32> {
     // Instantiates instance of WebGPU
@@ -177,42 +161,25 @@ async fn execute_gpu(numbers: Vec<u32>, spirv: &[u32]) -> Vec<u32> {
 
 fn main() {
     let spirv = compile_spirv();
-    //subscriber::initialize_default_subscriber(None);
-    futures::executor::block_on(run(spirv.as_binary()));
+    let r = futures::executor::block_on(execute_gpu(vec![1, 2, 3], spirv.as_binary()));
+    dbg!(r);
 }
 
 fn compile_spirv() -> shaderc::CompilationArtifact {
-    let source = r##"#version 450
-layout(local_size_x = 1) in;
+    let source = r##"
+#version 450
 
-layout(set = 0, binding = 0) buffer PrimeIndices {
-    uint[] indices;
-}; // this is used as both input and output for convenience
+layout(local_size_x = 64, local_size_y = 1, local_size_z = 1) in;
 
-// The Collatz Conjecture states that for any integer n:
-// If n is even, n = n/2
-// If n is odd, n = 3n+1
-// And repeat this process for each new n, you will always eventually reach 1.
-// Though the conjecture has not been proven, no counterexample has ever been found.
-// This function returns how many times this recurrence needs to be applied to reach 1.
-uint collatz_iterations(uint n) {
-    uint i = 0;
-    while(n != 1) {
-        if (mod(n, 2) == 0) {
-            n = n / 2;
-        }
-        else {
-            n = (3 * n) + 1;
-        }
-        i++;
-    }
-    return i;
-}
+layout(set = 0, binding = 0) buffer Data {
+    uint data[];
+} buf;
 
 void main() {
-    uint index = gl_GlobalInvocationID.x;
-    indices[index] = collatz_iterations(indices[index]);
-}"##;
+    uint idx = gl_GlobalInvocationID.x;
+    buf.data[idx] += 50;
+    }
+        "##;
     let mut compiler = shaderc::Compiler::new().unwrap();
     let artifact = compiler
         .compile_into_spirv(

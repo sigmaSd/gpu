@@ -4,6 +4,12 @@
 use std::convert::TryInto;
 use wgpu::util::DeviceExt;
 
+///***execute_gpu_sync***
+///
+///Sync version of `execute_gpu`
+pub fn execute_gpu_sync(items: Vec<Vec<u32>>, spirv: &[u32]) -> Vec<u32> {
+    futures::executor::block_on(execute_gpu(items, spirv))
+}
 ///***execute_gpu***
 ///
 ///Takes a vector of buffers, the first buffer is used as the output buffer.

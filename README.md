@@ -1,14 +1,14 @@
 # gpu
 Rust library to apply operations on a buffer using the gpu
 ```rust
-use gpu::{calc, execute_gpu};
+use gpu::{calc, execute_gpu_sync};
 
 fn main() {
     let spirv = calc!(b0 += b1 * b2 + b3 + 4);
-    let r = futures::executor::block_on(execute_gpu(
+    let r = execute_gpu_sync(
         vec![vec![0, 0, 0], vec![5, 4, 0], vec![1, 2, 0], vec![2, 5, 4]],
         spirv.as_binary(),
-    ));
+    );
     assert_eq!(r, vec!(11, 17, 8));
 }
 ```

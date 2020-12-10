@@ -1,6 +1,16 @@
+/*!
+  Use the gpu to run computations
+*/
 use std::convert::TryInto;
 use wgpu::util::DeviceExt;
 
+///***execute_gpu***
+///
+///Takes a vector of buffers, the first buffer is used as the output buffer.
+///
+///Takes the compiled spirv as well and run the compiled operations.
+///
+///The user must ensure that the spirv and the vector have the same number of buffers.
 pub async fn execute_gpu(items: Vec<Vec<u32>>, spirv: &[u32]) -> Vec<u32> {
     //the first item is the output
     let len = items[0].len();
@@ -131,6 +141,20 @@ pub async fn execute_gpu(items: Vec<Vec<u32>>, spirv: &[u32]) -> Vec<u32> {
     }
 }
 
+///***calc***
+///
+///Macro to compile spirv from an equation.
+///
+///All buffers need to have the name b with a digit like b1.
+///
+///b0 is the output buffer.
+///
+///Examples:
+///```
+///  calc!(b0 = 4)
+///  calc!(b0 += 4)
+///  calc!(b0 += b1 * b2 + 5)
+///```
 #[macro_export]
 macro_rules! calc {
     // b0 += b1

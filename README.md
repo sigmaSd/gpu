@@ -15,11 +15,11 @@ fn main() {
 
 ***execute_gpu***
 
-It takes a vector of buffers, the first buffer is used as the output buffer. 
+Takes a vector of buffers, the first buffer is used as the output buffer. 
 
-It takes the compiled spirv as well and run the compiled operations.
+Takes the compiled spirv as well and run the compiled operations.
 
-The use must ensure that the spirv and the vector have the same number of buffers.
+The user must ensure that the spirv and the vector have the same number of buffers.
 
 ***calc***
 
@@ -27,8 +27,8 @@ Macro to compile spirv from an equation
 All buffers need to have the name b with a digit like b1
 b0 is the output buffer
 Examples:
-```
-  b0 = 4
-  b0 += 4
-  b0 += b1 * b2 + 5
+```rust
+  calc!(b0 = 4)
+  calc!(b0 += 4)
+  calc!(b0 += b1 * b2 + 5)
 ```

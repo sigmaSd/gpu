@@ -141,6 +141,11 @@ pub async fn execute_gpu(items: Vec<Vec<u32>>, spirv: &[u32]) -> Vec<u32> {
     }
 }
 
+//Rexport shaderc for the calc macro
+#[doc(hidden)]
+pub use regex;
+#[doc(hidden)]
+pub use shaderc;
 ///***calc***
 ///
 ///Macro to compile spirv from an equation.
@@ -163,7 +168,7 @@ macro_rules! calc {
     ($e:expr) => {{
         let string = stringify!($e);
         let n = string.match_indices("b").count();
-        let string = regex::Regex::new(r#"(b\d+*)"#)
+        let string = gpu::regex::Regex::new(r#"(b\d+*)"#)
             .unwrap()
             .replace_all(string, "$1.data[idx]");
 
@@ -183,11 +188,11 @@ macro_rules! calc {
             string
         ));
 
-        let mut compiler = shaderc::Compiler::new().unwrap();
+        let mut compiler = gpu::shaderc::Compiler::new().unwrap();
         let artifact = compiler
             .compile_into_spirv(
                 &source,
-                shaderc::ShaderKind::Compute,
+                gpu::shaderc::ShaderKind::Compute,
                 "shader.glsl",
                 "main",
                 None,
